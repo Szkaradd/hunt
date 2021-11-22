@@ -1,0 +1,4 @@
+#ifndef _TREASURE_HUNT_H
+#define _TREASURE_HUNT_H
+
+#endif //_TREASURE_HUNT_H
