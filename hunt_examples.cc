@@ -5,8 +5,7 @@ namespace {
 
     constexpr int soloHunt() {
         Explorer<int> a;
-        Treasure<int, false> t1(5);
-        Treasure<int, false> t2(6);
+        Treasure<int, false> t1(5);        Treasure<int, false> t2(6);
         SafeTreasure<int> t3(7);
         TrappedTreasure<int> t4(10);
 
