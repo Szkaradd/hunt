@@ -92,5 +92,9 @@ public:
     }
 };
 
+template<typename T>
+using Explorer = Adventurer<T, false>; // nieuzbrojony poszukiwacz przygód
+
+
 #endif //_MEMBER_H
 
