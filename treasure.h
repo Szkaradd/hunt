@@ -1,48 +1,43 @@
-//
-// Created by szkaradd on 22.11.2021.
-//
-
 #ifndef _TREASURE_H
 #define _TREASURE_H
 // Przykladowe wywolanie
 // Treasure<int, false> t1(5);        Treasure<int, false> t2(6);
 // Treasure<ValueType, IsTrapped>
 // ValueType - całkowitoliczbowy, IsTrapped - logiczny
-
+#include <concepts>
 #include <type_traits>
-using namespace std;
-using strength_t = unsigned int;
 
-template<typename T,  bool IsTrapped>
+
+template<typename T>
+concept integral = std::integral<T>;
+
+template<typename ValueType, bool IsTrapped>
 class Treasure {
-    T value;
+    ValueType value;
 public:
-    constexpr Treasure(T arg) {
-        static_assert(is_integral<T>::value, "Integral required.");
+    constexpr explicit Treasure(ValueType arg) {
+        static_assert(is_integral<ValueType>::value, "Integral required.");
         value = arg;
     }
     static const bool isTrapped = IsTrapped;
 
-    constexpr T evaluate() {
+    constexpr ValueType evaluate() {
         return value;
     }
 
-    constexpr T getLoot() {
-        T temp = value;
+    constexpr ValueType getLoot() {
+        ValueType temp = value;
         value = 0;
         return temp;
     }
 
 };
 
+template<typename ValueType>
+using SafeTreasure = Treasure<ValueType, false>;
 
-template<typename T>
-using SafeTreasure = Treasure<T, false>;
-
-
-template<typename T>
-using TrappedTreasure = Treasure<T, true>;
-
+template<typename ValueType>
+using TrappedTreasure = Treasure<ValueType, true>;
 
 #endif //_TREASURE_H
 
