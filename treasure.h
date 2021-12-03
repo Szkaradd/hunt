@@ -9,23 +9,19 @@
 // Treasure<ValueType, IsTrapped>
 // ValueType - całkowitoliczbowy, IsTrapped - logiczny
 
+#include <type_traits>
+using namespace std;
+using strength_t = unsigned int;
 
-using strength_t = uint32_t;
-
-
-
-//template<template<typename T1> requires Integral<T1> typename T>
-// tu na pewno trzeba dodać odpowiednie constexpr itd, inline itd, ale teraz juz nie ogarniam
-template<typename T,  bool trap> // ale fikoł ja pierdole, bedzie sie psulo jak przekazemy int zamiast bool, potem pomysle
-//requires true<IsTrapped>
+template<typename T,  bool IsTrapped>
 class Treasure {
     T value;
 public:
     constexpr Treasure(T arg) {
-        static_assert(std::is_integral<T>::value, "Integral required.");
+        static_assert(is_integral<T>::value, "Integral required.");
         value = arg;
     }
-    static constexpr bool IsTrapped = trap;
+    static const bool isTrapped = IsTrapped;
 
     constexpr T evaluate() {
         return value;
@@ -38,29 +34,15 @@ public:
     }
 
 };
+
 
 template<typename T>
-class SafeTreasure {
-    T value;
-public:
-    constexpr SafeTreasure(T arg) {
-        static_assert(std::is_integral<T>::value, "Integral required.");
-        value = arg;
-    }
-    constexpr static bool IsTrapped = false;
+using SafeTreasure = Treasure<T, false>;
 
-    constexpr T evaluate() {
-        return value;
-    }
 
-    constexpr T getLoot() {
-        T temp = value;
-        value = 0;
-        return temp;
-    }
-
-};
-
+template<typename T>
+using TrappedTreasure = Treasure<T, true>;
 
 
 #endif //_TREASURE_H
+

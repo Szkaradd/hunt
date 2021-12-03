@@ -4,7 +4,12 @@
 
 #ifndef _MEMBER_H
 #define _MEMBER_H
-using strength_t = uint32_t;
+
+#include "treasure.h"
+#include <cstddef>
+#include <type_traits>
+using strength_t = unsigned int;
+using namespace std;
 
 template<typename T, bool trap>
 class Adventurer {
@@ -14,20 +19,21 @@ public:
     constexpr static bool isArmed = trap;
 
     constexpr Adventurer() {
-//        static_assert(!isArmed, "Is armed!"); // nie wiedziec czemu nie dziala
+        static_assert(is_integral<T>::value, "Integral required.");
+        static_assert(!isArmed, "Is armed!"); // nie wiedziec czemu nie dziala
         strength = 0;
         treasureGathered = 0;
     } // pewnie da sie zgrabniej
     constexpr Adventurer(strength_t arg) {
-        static_assert(isArmed == false);
-        static_assert(std::is_integral<T>::value, "Integral required.");
+        static_assert(isArmed == true);
+        static_assert(is_integral<T>::value, "Integral required.");
         strength = arg;
         treasureGathered = 0;
     } // naprawde nie wiem jak to ma do konca byc
 
 
 
-    constexpr T getStrength() {
+    constexpr T getStrength() const {
         static_assert(isArmed ==
                       true); // moze cos innego, tylko dla ubzrojonego tasiemca
         return strength;
@@ -62,12 +68,11 @@ class Veteran {
     size_t completedExpeditions = CompletedExpeditions;
     strength_t strength = fib(completedExpeditions);
 public:
-//    constexpr Veteran() {
-//        static_assert(std::is_integral<T>::value, "Integral required."); // poprawny typ jak wcześniej
-//        static_assert(completedExpeditions < 25);
-//    }
 
-    constexpr Veteran() = default; // nie wiem troche jak to inaczej sprawdzac, do poprawy bo brakuje asercji
+    constexpr Veteran() {
+        static_assert(is_integral<T>::value, "Integral required.");
+        treasureGathered = 0;
+    }
     static const bool isArmed = true;
 
     template<bool isTrapped>
@@ -82,9 +87,10 @@ public:
         return temp;
     }
 
-    constexpr T getStrength() {
+    constexpr T getStrength() const {
         return strength;
     }
 };
 
 #endif //_MEMBER_H
+
