@@ -1,3 +1,8 @@
+/**
+ * @file treasure_hunt.h
+ * @authors Mikołaj Szkaradek, Wiktor Grzankowski
+ */
+
 #ifndef _TREASURE_HUNT_H
 #define _TREASURE_HUNT_H
 
@@ -6,41 +11,41 @@
 #include <concepts>
 #include <utility>
 
-template <typename T>
-concept MemberType = requires (T member) {
+template<typename T>
+concept MemberType = requires(T member) {
     typename T::strength_t;
 
-    {[] () constexpr { return T::isArmed; }() } -> std::convertible_to<bool>;
+    { []() constexpr { return T::isArmed; }() } -> std::convertible_to<bool>;
 
-    {member.pay()} -> std::integral;
+    { member.pay() } -> std::integral;
 
     member.loot(std::declval<Treasure<decltype(member.pay()), true>>());
     member.loot(std::declval<Treasure<decltype(member.pay()), false>>());
 };
 
-template <typename T>
+template<typename T>
 concept EncounterSide = TreasureType<T> || MemberType<T>;
 
-template <EncounterSide sideA, EncounterSide sideB>
-using Encounter = std::pair<sideA&, sideB&>;
+template<EncounterSide sideA, EncounterSide sideB>
+using Encounter = std::pair<sideA &, sideB &>;
 
 // Treasure vs member.
-template <TreasureType A, MemberType B>
+template<TreasureType A, MemberType B>
 constexpr void run(Encounter<A, B> encounter) {
     (encounter.second).loot(std::move((encounter.first)));
 }
 
 // Member vs treasure.
-template <MemberType A, TreasureType B>
+template<MemberType A, TreasureType B>
 constexpr void run(Encounter<A, B> encounter) {
     (encounter.first).loot(std::move((encounter).second));
 }
 
 // Armed member vs armed member.
-template <MemberType A, MemberType B>
+template<MemberType A, MemberType B>
 requires A::isArmed && B::isArmed
 constexpr void run(Encounter<A, B> encounter) {
-    auto [sideA, sideB] = encounter;
+    auto[sideA, sideB] = encounter;
 
     if (sideA.getStrength() > sideB.getStrength())
         sideA.loot(SafeTreasure<decltype(sideB.pay())>(sideB.pay()));
@@ -49,27 +54,26 @@ constexpr void run(Encounter<A, B> encounter) {
 }
 
 // Armed member vs unarmed member.
-template <MemberType A, MemberType B>
+template<MemberType A, MemberType B>
 requires A::isArmed && (!B::isArmed)
 constexpr void run(Encounter<A, B> encounter) {
-    auto [sideA, sideB] = encounter;
+    auto[sideA, sideB] = encounter;
     sideA.loot(SafeTreasure<decltype(sideB.pay())>(sideB.pay()));
 }
 
 // Unarmed member vs armed member.
-template <MemberType A, MemberType B>
+template<MemberType A, MemberType B>
 requires (!A::isArmed) && B::isArmed
 constexpr void run(Encounter<A, B> encounter) {
-    auto [sideA, sideB] = encounter;
+    auto[sideA, sideB] = encounter;
     sideB.loot(SafeTreasure<decltype(sideA.pay())>(sideA.pay()));
 }
 
 // Unarmed member vs unarmed member.
-template <MemberType A, MemberType B>
+template<MemberType A, MemberType B>
 requires (!A::isArmed) && (!B::isArmed)
 constexpr void run(Encounter<A, B>) {}
 
-// expedition
 
 constexpr void expedition() {}
 
