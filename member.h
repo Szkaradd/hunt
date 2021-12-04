@@ -1,53 +1,45 @@
-//
-// Created by szkaradd on 22.11.2021.
-//
-
 #ifndef _MEMBER_H
 #define _MEMBER_H
 
-#include "treasure.h"
+//#include "treasure.h"
 #include <cstddef>
 #include <type_traits>
+
 using strength_t = unsigned int;
-using namespace std;
 
-template<typename T, bool trap>
+template <typename ValueType>
+concept TreasureType = requires (ValueType type) {
+    {Treasure(type)} -> std::same_as<ValueType>;
+};
+
+template<typename ValueType, bool IsArmed>
+requires TreasureType<SafeTreasure<ValueType>>
 class Adventurer {
-    strength_t strength;
-    T treasureGathered; // nie wiem jak to przekazac albo pamietac, ale jakos
+    strength_t strength = 0;
+    ValueType treasureGathered = 0; // nie wiem jak to przekazac albo pamietac, ale jakos
 public:
-    constexpr static bool isArmed = trap;
+    constexpr static bool isArmed = IsArmed;
 
-    constexpr Adventurer() {
-        static_assert(is_integral<T>::value, "Integral required.");
-        static_assert(!isArmed, "Is armed!"); // nie wiedziec czemu nie dziala
-        strength = 0;
-        treasureGathered = 0;
-    } // pewnie da sie zgrabniej
-    constexpr Adventurer(strength_t arg) {
-        static_assert(isArmed == true);
-        static_assert(is_integral<T>::value, "Integral required.");
-        strength = arg;
-        treasureGathered = 0;
-    } // naprawde nie wiem jak to ma do konca byc
+    // Zmieniłem te konstruktory ale clang tidy jakos nie lubi tego drugiego xd.
+    constexpr Adventurer() requires (!IsArmed) = default;
 
+    constexpr explicit Adventurer(strength_t str) requires (IsArmed){
+        strength = str;
+    }
 
-
-    constexpr T getStrength() const {
-        static_assert(isArmed ==
-                      true); // moze cos innego, tylko dla ubzrojonego tasiemca
+    // Tu też clang tidy się wkurza idk czemu.
+    constexpr ValueType getStrength() const requires (IsArmed){
         return strength;
     }
 
-
-    constexpr T pay() {
-        T temp = treasureGathered;
+    constexpr ValueType pay() {
+        ValueType temp = treasureGathered;
         treasureGathered = 0;
         return temp;
     }
 
     template<bool isTrapped>
-    constexpr void loot(Treasure<T, isTrapped> &&treasure) {
+    constexpr void loot(Treasure<ValueType, isTrapped> &&treasure) {
         if ((isTrapped && strength > 0) || !isTrapped) { // można zabrać skarb
             treasureGathered += treasure.getLoot(); // nie wiem czy tu nie powinno być -> zamiast .
             strength /= 2;
@@ -55,46 +47,45 @@ public:
     }
 };
 
+template<typename ValueType>
+using Explorer = Adventurer<ValueType, false>; // nieuzbrojony poszukiwacz przygód
+
 constexpr strength_t fib(size_t n) {
-    int f[25] = {0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 610,
-                 987, 1597, 2584, 4181, 6765, 10946, 17711, 28657, 46368};
+    int f[25] = {0, 1, 1, 2, 3, 5, 8, 13, 21,
+                 34,55, 89, 144, 233, 377, 610,
+                 987, 1597, 2584, 4181, 6765, 10946,
+                 17711, 28657, 46368};
 
     return f[n];
 }
 
-template<typename T, size_t CompletedExpeditions>
+template<typename ValueType, size_t CompletedExpeditions>
+requires TreasureType<SafeTreasure<ValueType>> && (CompletedExpeditions < 25)
 class Veteran {
-    T treasureGathered;
+    ValueType treasureGathered = 0;
     size_t completedExpeditions = CompletedExpeditions;
     strength_t strength = fib(completedExpeditions);
 public:
 
-    constexpr Veteran() {
-        static_assert(is_integral<T>::value, "Integral required.");
-        treasureGathered = 0;
-    }
+    constexpr Veteran() = default;
     static const bool isArmed = true;
 
     template<bool isTrapped>
-    constexpr void loot(Treasure<T, isTrapped> &&treasure) {
+    constexpr void loot(Treasure<ValueType, isTrapped> &&treasure) {
         // weteran zawsze kozak wie co robic
         treasureGathered += treasure.getLoot();
     }
 
-    constexpr T pay() {
-        T temp = treasureGathered;
+    constexpr ValueType pay() {
+        ValueType temp = treasureGathered;
         treasureGathered = 0;
         return temp;
     }
 
-    constexpr T getStrength() const {
+    constexpr ValueType getStrength() const {
         return strength;
     }
 };
-
-template<typename T>
-using Explorer = Adventurer<T, false>; // nieuzbrojony poszukiwacz przygód
-
 
 #endif //_MEMBER_H
 

@@ -7,11 +7,13 @@
 #include <concepts>
 #include <type_traits>
 
+using strength_t = unsigned int;
 
-template<typename T>
-concept integral = std::integral<T>;
+template<typename ValueType>
+concept Integral = std::integral<ValueType>;
 
 template<typename ValueType, bool IsTrapped>
+requires Integral<ValueType>
 class Treasure {
     ValueType value;
 public:
