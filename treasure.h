@@ -7,7 +7,7 @@
 #include <concepts>
 #include <type_traits>
 
-using strength_t = unsigned int;
+//using strength_t = unsigned int;
 
 template<typename ValueType>
 concept Integral = std::integral<ValueType>;
@@ -18,7 +18,6 @@ class Treasure {
     ValueType value;
 public:
     constexpr explicit Treasure(ValueType arg) {
-        static_assert(std::is_integral<ValueType>::value, "Integral required.");
         value = arg;
     }
     static const bool isTrapped = IsTrapped;

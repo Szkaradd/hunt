@@ -5,20 +5,20 @@
 #include <cstddef>
 #include <type_traits>
 
-using strength_t = unsigned int;
+//using strength_t = unsigned int;
 
 template <typename ValueType>
 concept TreasureType = requires (ValueType type) {
-    {Treasure(type)} -> std::same_as<ValueType>;
+    {Treasure{type}} -> std::same_as<ValueType>;
 };
+
+
 
 template<typename ValueType, bool IsArmed>
 requires TreasureType<SafeTreasure<ValueType>>
 class Adventurer {
-    strength_t strength = 0;
-    ValueType treasureGathered = 0; // nie wiem jak to przekazac albo pamietac, ale jakos
 public:
-    
+    using strength_t = unsigned int;
     constexpr static bool isArmed = IsArmed;
 
     // Zmieniłem te konstruktory ale clang tidy jakos nie lubi tego drugiego xd.
@@ -41,17 +41,21 @@ public:
 
     template<bool isTrapped>
     constexpr void loot(Treasure<ValueType, isTrapped> &&treasure) {
-        if ((isTrapped && strength > 0) || !isTrapped) { // można zabrać skarb
-            treasureGathered += treasure.getLoot(); // nie wiem czy tu nie powinno być -> zamiast .
+        if ((isTrapped && strength > 0) || !isTrapped) {
+            treasureGathered += treasure.getLoot();
             if (isTrapped)
                 strength /= 2;
         }
     }
+
+private:
+    ValueType treasureGathered = 0; // nie wiem jak to przekazac albo pamietac, ale jakos
+    strength_t strength = 0;
 };
 
 template<typename ValueType>
 using Explorer = Adventurer<ValueType, false>; // nieuzbrojony poszukiwacz przygód
-
+using strength_t = unsigned int;
 constexpr strength_t fib(size_t n) {
     int f[25] = {0, 1, 1, 2, 3, 5, 8, 13, 21,
                  34,55, 89, 144, 233, 377, 610,
@@ -60,15 +64,12 @@ constexpr strength_t fib(size_t n) {
 
     return f[n];
 }
-
+using strength_t = unsigned int;
 template<typename ValueType, size_t CompletedExpeditions>
 requires TreasureType<SafeTreasure<ValueType>> && (CompletedExpeditions < 25)
 class Veteran {
-    ValueType treasureGathered = 0;
-    size_t completedExpeditions = CompletedExpeditions;
-    strength_t strength = fib(completedExpeditions);
 public:
-
+    using strength_t = unsigned int;
     constexpr Veteran() = default;
     static const bool isArmed = true;
 
@@ -87,6 +88,11 @@ public:
     constexpr strength_t getStrength() const {
         return strength;
     }
+
+private:
+    ValueType treasureGathered = 0;
+    size_t completedExpeditions = CompletedExpeditions;
+    strength_t strength = fib(completedExpeditions);
 };
 
 #endif //_MEMBER_H
