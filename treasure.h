@@ -18,7 +18,7 @@ class Treasure {
     ValueType value;
 public:
     constexpr explicit Treasure(ValueType arg) {
-        static_assert(is_integral<ValueType>::value, "Integral required.");
+        static_assert(std::is_integral<ValueType>::value, "Integral required.");
         value = arg;
     }
     static const bool isTrapped = IsTrapped;
@@ -42,4 +42,3 @@ template<typename ValueType>
 using TrappedTreasure = Treasure<ValueType, true>;
 
 #endif //_TREASURE_H
-

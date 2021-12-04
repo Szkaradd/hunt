@@ -18,6 +18,7 @@ class Adventurer {
     strength_t strength = 0;
     ValueType treasureGathered = 0; // nie wiem jak to przekazac albo pamietac, ale jakos
 public:
+    
     constexpr static bool isArmed = IsArmed;
 
     // Zmieniłem te konstruktory ale clang tidy jakos nie lubi tego drugiego xd.
@@ -28,7 +29,7 @@ public:
     }
 
     // Tu też clang tidy się wkurza idk czemu.
-    constexpr ValueType getStrength() const requires (IsArmed){
+    constexpr strength_t getStrength() const requires (IsArmed){
         return strength;
     }
 
@@ -42,7 +43,8 @@ public:
     constexpr void loot(Treasure<ValueType, isTrapped> &&treasure) {
         if ((isTrapped && strength > 0) || !isTrapped) { // można zabrać skarb
             treasureGathered += treasure.getLoot(); // nie wiem czy tu nie powinno być -> zamiast .
-            strength /= 2;
+            if (isTrapped)
+                strength /= 2;
         }
     }
 };
@@ -82,10 +84,9 @@ public:
         return temp;
     }
 
-    constexpr ValueType getStrength() const {
+    constexpr strength_t getStrength() const {
         return strength;
     }
 };
 
 #endif //_MEMBER_H
-

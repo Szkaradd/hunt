@@ -22,4 +22,13 @@ concept MemberType = requires (T m) {
 template <typename T>
 concept EncounterSide = TreasureType<T> || MemberType<T>;
 
+template <typename A, typename B>
+requires (EncounterSide<A> && EncounterSide<B>)
+using Encounter = std::pair<A&, B&>;
+
+//template<EncounterSide A, EncounterSide B>
+//using Encounter = std::pair<A&, B&>;
+
+
+
 #endif //_TREASURE_HUNT_H
