@@ -7,7 +7,7 @@
 #include <utility>
 
 template <typename T>
-// To jest jakieś dziwne nie do końca wiem czy jest ok...
+// To jest jakieś dziwne ale raczej jest git...
 concept MemberType = requires (T m) {
     typename T::strength_t;
 
