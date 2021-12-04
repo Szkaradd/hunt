@@ -8,7 +8,7 @@
 
 template <typename T>
 concept MemberType = requires (T member) {
-    //typename T::strength_t;
+    typename T::strength_t;
 
     {[] () constexpr { return T::isArmed; }() } -> std::convertible_to<bool>;
 
@@ -68,5 +68,16 @@ constexpr void run(Encounter<A, B> encounter) {
 template <MemberType A, MemberType B>
 requires (!A::isArmed) && (!B::isArmed)
 constexpr void run(Encounter<A, B>) {}
+
+// expedition
+
+constexpr void expedition() {}
+
+template<typename Encounter, typename ... Encounters>
+constexpr void expedition(Encounter enc, Encounters... encs) {
+    run(enc);
+    expedition(encs...);
+}
+
 
 #endif //_TREASURE_HUNT_H
