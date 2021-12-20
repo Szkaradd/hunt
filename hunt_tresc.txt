@@ -140,23 +140,23 @@ Każda ekspedycja składa się z szeregu zdarzeń. Dopuszczamy ich dwa rodzaje:
 
 ### Koncept strony spotkania
 
-Należy zdefiniować koncept `EncounterSide<T>`. Spełnienie go przez typ `T`
+Należy zdefiniować koncept `EncounterSide<ValueType>`. Spełnienie go przez typ `ValueType`
 powinno oznaczać jedno z poniższych:
 
-* Typ `T` reprezentuje poprawną instancję szablonu `Treasure`.
+* Typ `ValueType` reprezentuje poprawną instancję szablonu `Treasure`.
 
-* Typ `T` reprezentuje poprawnego uczestnika ekspedycji. Za taki przyjmujemy
+* Typ `ValueType` reprezentuje poprawnego uczestnika ekspedycji. Za taki przyjmujemy
   typ, który spełnia wszystkie poniższe kryteria:
 
-    - typ `T` udostępnia typ o nazwie `strength_t`,
+    - typ `ValueType` udostępnia typ o nazwie `strength_t`,
 
-    - typ `T` ma statyczne pole `isArmed`, którego typ jest konwertowalny do
+    - typ `ValueType` ma statyczne pole `isArmed`, którego typ jest konwertowalny do
       typu logicznego `bool`,
 
-    - typ `T` definiuje metodę `pay()`, która zwraca obiekt, będący poprawnym
+    - typ `ValueType` definiuje metodę `pay()`, która zwraca obiekt, będący poprawnym
       typem wartości skarbu,
 
-    - typ `T` definiuje metodę `loot(treasure)`, gdzie `treasure` jest obiektem
+    - typ `ValueType` definiuje metodę `loot(treasure)`, gdzie `treasure` jest obiektem
       typu `Treasure<V, B>` dla `V` zgodnego z typem zwracanym przez
       metodę `pay()` i `B` będącego dowolną wartością logiczną.
 

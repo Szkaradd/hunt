@@ -40,4 +40,9 @@ using SafeTreasure = Treasure<ValueType, false>;
 template<typename ValueType>
 using TrappedTreasure = Treasure<ValueType, true>;
 
+template<typename ValueType>
+concept TreasureType = requires(ValueType type) {
+    { Treasure{type}} -> std::same_as<ValueType>;
+};
+
 #endif //_TREASURE_H

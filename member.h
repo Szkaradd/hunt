@@ -6,28 +6,26 @@
 #ifndef _MEMBER_H
 #define _MEMBER_H
 
+//#include <concepts>
+#include "treasure.h"
+#include <cstdint>
 #include <cstddef>
-#include <type_traits>
-
-template<typename ValueType>
-concept TreasureType = requires(ValueType type) {
-    { Treasure{type}} -> std::same_as<ValueType>;
-};
+//#include <type_traits>
 
 template<typename ValueType, bool IsArmed> requires
 TreasureType<SafeTreasure<ValueType>>
 class Adventurer {
 public:
-    using strength_t = unsigned int;
+    using strength_t = uint32_t;
     constexpr static bool isArmed = IsArmed;
 
     constexpr Adventurer() requires (!IsArmed) = default;
 
-    constexpr explicit Adventurer(strength_t str) requires(IsArmed){
+    constexpr explicit Adventurer(strength_t str) requires(IsArmed) {
         strength = str;
     }
 
-    constexpr strength_t getStrength() const requires(IsArmed){
+    constexpr strength_t getStrength() const requires(IsArmed) {
         return strength;
     }
 
